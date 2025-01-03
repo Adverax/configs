@@ -5,43 +5,34 @@ import (
 	"reflect"
 )
 
-type DataSource interface {
-	Fetch() (map[string]interface{}, error)
-}
-
-type LoadConfigOptions struct {
-	sources   []DataSource
+type Loader struct {
+	sources   []Source
 	converter Converter
+	validator Validator
 }
 
-type LoadConfigOption func(*LoadConfigOptions)
-
-func WithDataSources(sources ...DataSource) LoadConfigOption {
-	return func(opts *LoadConfigOptions) {
-		opts.sources = append(opts.sources, sources...)
-	}
+func NewLoader() *Loader {
+	return &Loader{}
 }
 
-func WithConverter(converter Converter) LoadConfigOption {
-	return func(opts *LoadConfigOptions) {
-		opts.converter = converter
-	}
+func (that *Loader) WithSources(sources ...Source) *Loader {
+	that.sources = append(that.sources, sources...)
+	return that
 }
 
-func LoadConfig(config interface{}, options ...LoadConfigOption) error {
-	opts := LoadConfigOptions{
-		converter: defaultConverter,
-	}
-	for _, opt := range options {
-		opt(&opts)
-	}
+func (that *Loader) WithConverter(converter Converter) *Loader {
+	that.converter = converter
+	return that
+}
 
-	var data map[string]interface{}
-	for _, source := range opts.sources {
-		if data == nil {
-			data = make(map[string]interface{})
-		}
+func (that *Loader) WithValidator(validator Validator) *Loader {
+	that.validator = validator
+	return that
+}
 
+func (that *Loader) Load(config interface{}) error {
+	data := make(map[string]interface{})
+	for _, source := range that.sources {
 		d, err := source.Fetch()
 		if err != nil {
 			return fmt.Errorf("error in source: %w", err)
@@ -50,7 +41,19 @@ func LoadConfig(config interface{}, options ...LoadConfigOption) error {
 		override(data, d)
 	}
 
-	return opts.converter.Convert(data, config)
+	err := that.converter.Convert(data, config)
+	if err != nil {
+		return fmt.Errorf("error convert config: %w", err)
+	}
+
+	if that.validator != nil {
+		err = that.validator.Validate(config)
+		if err != nil {
+			return fmt.Errorf("error validate config: %w", err)
+		}
+	}
+
+	return nil
 }
 
 func override(a, b map[string]interface{}) {
