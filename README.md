@@ -11,7 +11,7 @@ It is a lightweight library for managing application configurations using YAML f
 ## Installation
 
 ```bash
-npm install adverax/configs
+go get github.com/adverax/configs
 ```
 
 ## Usage
