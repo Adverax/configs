@@ -17,8 +17,8 @@ go get github.com/adverax/configs
 ## Usage
 
 ### Basic examples
--- see adverax/configs/formats/yaml/example_test.go for more information.
--- see adverax/configs/formats/json/example_test.go for more information.
+- see adverax/configs/formats/yaml/example_test.go for more information.
+- see adverax/configs/formats/json/example_test.go for more information.
 
 ## License
 
