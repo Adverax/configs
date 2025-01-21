@@ -4,6 +4,7 @@ It is a lightweight library for managing application configurations using YAML f
 
 ## Features
 - Supports JSON and YAML formats.
+- Supports loading from environment variables.
 - Merge multiple configuration sources.
 - Validate configurations with ease.
 - Support for nested and hierarchical configuration structures.
@@ -19,6 +20,7 @@ go get github.com/adverax/configs
 ### Basic examples
 - see adverax/configs/formats/yaml/example_test.go for more information.
 - see adverax/configs/formats/json/example_test.go for more information.
+- see adverax/configs/formats/mix/example_test.go for more information.
 
 ## License
 
