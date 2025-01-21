@@ -1,18 +1,14 @@
-package configs
+package configValidator
 
 import (
 	"github.com/go-playground/validator"
 )
 
-type Validator interface {
-	Validate(config interface{}) error
-}
-
 type StructValidator struct {
 	validator *validator.Validate
 }
 
-func NewValidator(validator *validator.Validate) Validator {
+func New(validator *validator.Validate) Validator {
 	return &StructValidator{
 		validator: validator,
 	}

@@ -1,17 +1,26 @@
 package configs
 
-func LoadYamlConfigs(config interface{}, files ...string) error {
-	return LoadConfig(
-		config,
-		WithDataSources(NewYamlDataSources(files...)...),
-		WithConverter(NewYamlConverter()),
-	)
-}
+import (
+	"reflect"
+)
 
-func NewYamlDataSources(files ...string) []DataSource {
-	var ds []DataSource
-	for i, f := range files {
-		ds = append(ds, NewYamlDataSource(NewFileStream(f, WithFileStreamMustExists(i == 0))))
+func override(a, b map[string]interface{}) {
+	for k, v := range b {
+		if av, ok := a[k]; ok {
+			if reflect.TypeOf(v) == reflect.TypeOf(av) {
+				switch v.(type) {
+				case map[string]interface{}:
+					override(av.(map[string]interface{}), v.(map[string]interface{}))
+				case []interface{}:
+					a[k] = v
+				default:
+					a[k] = v
+				}
+			} else {
+				a[k] = v
+			}
+		} else {
+			a[k] = v
+		}
 	}
-	return ds
 }

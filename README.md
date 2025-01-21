@@ -24,11 +24,15 @@ func MakeDefaultConfig() *MyConfig {
 
 func main() {
     conf := MakeDefaultConfig()
-    err := config.NewYamlLoader().
-        WithPrimary("path/to/config-primary.yaml").
-        WithOverride("path/to/config-override.yaml").
+	err := NewYamlLoader().
+        WithFile("path/to/config-primary.yaml").
+        WithFile("path/to/config-override.yaml").
         WithValidator(nil).
         Load(&conf)
+    if err != nil {
+        log.Fatalf("Failed to load config: %v", err)
+    }
+    // ... working with conf
 }
 ~~~
 

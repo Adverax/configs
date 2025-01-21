@@ -1,0 +1,52 @@
+package configs
+
+import "fmt"
+
+type Builder struct {
+	loader *Loader
+}
+
+func NewBuilder() *Builder {
+	return &Builder{
+		loader: &Loader{},
+	}
+}
+
+func (that *Builder) WithSources(sources ...Source) *Builder {
+	that.loader.sources = append(that.loader.sources, sources...)
+	return that
+}
+
+func (that *Builder) WithConverter(converter Converter) *Builder {
+	that.loader.converter = converter
+	return that
+}
+
+func (that *Builder) WithValidator(validator Validator) *Builder {
+	that.loader.validator = validator
+	return that
+}
+
+func (that *Builder) Build() (*Loader, error) {
+	if err := that.checkRequiredFields(); err != nil {
+		return nil, err
+	}
+
+	return that.loader, nil
+}
+
+func (that *Builder) checkRequiredFields() error {
+	if len(that.loader.sources) == 0 {
+		return ErrFieldSourcesIsRequired
+	}
+
+	if that.loader.converter == nil {
+		return ErrFieldConverterIsRequired
+	}
+
+	return nil
+}
+
+var (
+	ErrFieldSourcesIsRequired = fmt.Errorf("Field sources is required")
+)

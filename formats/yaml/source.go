@@ -1,25 +1,22 @@
-package configs
+package yamlConfig
 
 import (
 	"bytes"
+	"github.com/adverax/configs"
 	"gopkg.in/yaml.v3"
 )
 
-type Source interface {
-	Fetch() (map[string]interface{}, error)
+type Source struct {
+	fetcher configs.Fetcher
 }
 
-type YamlSource struct {
-	fetcher Fetcher
-}
-
-func NewYamlSource(fetcher Fetcher) Source {
-	return &YamlSource{
+func NewSource(fetcher configs.Fetcher) configs.Source {
+	return &Source{
 		fetcher: fetcher,
 	}
 }
 
-func (that *YamlSource) Fetch() (map[string]interface{}, error) {
+func (that *Source) Fetch() (map[string]interface{}, error) {
 	data := map[string]interface{}{}
 
 	source, err := that.fetcher.Fetch()
