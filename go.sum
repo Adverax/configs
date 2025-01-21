@@ -1,5 +1,5 @@
-github.com/adverax/core v1.0.1 h1:WvS4dwGp5GCrvLVHAlSHKWwBsLWYA2TbVN+l9uiRu+8=
-github.com/adverax/core v1.0.1/go.mod h1:ZKldTxBhNDIq9RWV1TqfoZ1n0XvfHG6sSdUbxnZq/Ro=
+github.com/adverax/core v1.0.3 h1:H1WbUszoBtu5ZMxeHTIFRA585Ba6rludovfCuvLRc1I=
+github.com/adverax/core v1.0.3/go.mod h1:ZKldTxBhNDIq9RWV1TqfoZ1n0XvfHG6sSdUbxnZq/Ro=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/oXslEjJA=

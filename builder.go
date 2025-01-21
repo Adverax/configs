@@ -12,7 +12,7 @@ func NewBuilder() *Builder {
 	}
 }
 
-func (that *Builder) WithSources(sources ...Source) *Builder {
+func (that *Builder) WithSource(sources ...Source) *Builder {
 	that.loader.sources = append(that.loader.sources, sources...)
 	return that
 }

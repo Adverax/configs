@@ -8,10 +8,11 @@ import (
 type SourceBuilder func(Fetcher) Source
 
 type FileLoaderBuilder struct {
-	files     []string
+	sources   []Source
 	builder   SourceBuilder
 	validator Validator
 	converter Converter
+	err       error
 }
 
 func NewFileLoaderBuilder() *FileLoaderBuilder {
@@ -23,8 +24,22 @@ func (that *FileLoaderBuilder) WithSourceBuilder(builder SourceBuilder) *FileLoa
 	return that
 }
 
-func (that *FileLoaderBuilder) WithFile(files ...string) *FileLoaderBuilder {
-	that.files = append(that.files, files...)
+func (that *FileLoaderBuilder) WithSource(sources ...Source) *FileLoaderBuilder {
+	that.sources = append(that.sources, sources...)
+	return that
+}
+
+func (that *FileLoaderBuilder) WithFile(file string, mustExists bool) *FileLoaderBuilder {
+	fetcher, err := fileFetchers.NewBuilder().
+		WithFilename(file).
+		WithMustExists(mustExists).
+		Build()
+	if that.err != nil {
+		that.err = err
+		return that
+	}
+
+	that.sources = append(that.sources, that.builder(fetcher))
 	return that
 }
 
@@ -43,20 +58,19 @@ func (that *FileLoaderBuilder) Build() (*Loader, error) {
 		return nil, err
 	}
 
-	sources, err := that.newFileSources(that.builder, that.files...)
-	if err != nil {
-		return nil, err
-	}
-
 	return NewBuilder().
-		WithSources(sources...).
+		WithSource(that.sources...).
 		WithConverter(that.converter).
 		WithValidator(that.validator).
 		Build()
 }
 
 func (that *FileLoaderBuilder) checkRequiredFields() error {
-	if len(that.files) == 0 {
+	if that.err != nil {
+		return that.err
+	}
+
+	if len(that.sources) == 0 {
 		return ErrFieldFilesIsRequired
 	}
 
@@ -69,27 +83,6 @@ func (that *FileLoaderBuilder) checkRequiredFields() error {
 	}
 
 	return nil
-}
-
-func (that *FileLoaderBuilder) newFileSources(
-	builder func(Fetcher) Source,
-	files ...string,
-) ([]Source, error) {
-	var ds []Source
-	for i, f := range files {
-		if f == "" {
-			continue
-		}
-		fetcher, err := fileFetchers.NewBuilder().
-			WithFilename(f).
-			WithMustExists(i == 0).
-			Build()
-		if err != nil {
-			return nil, err
-		}
-		ds = append(ds, builder(fetcher))
-	}
-	return ds, nil
 }
 
 var (

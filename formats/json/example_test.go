@@ -23,12 +23,12 @@ func DefaultConfig() *MyConfig {
 }
 
 func Example() {
-	// This example demonstrates how to use YAML loader.
+	// This example demonstrates how to use JSON loader.
 	//
 	// First, create loader:
 	loader, err := NewFileLoaderBuilder().
-		WithFile("config.global.json").
-		WithFile("config.local.json").
+		WithFile("config.global.json", false).
+		WithFile("config.local.json", false).
 		WithValidator(nil).
 		Build()
 	if err != nil {

@@ -1,6 +1,10 @@
-package yamlConfig
+package mixedConfig
 
-import "fmt"
+import (
+	"fmt"
+	yamlConfig "github.com/adverax/configs/formats/yaml"
+	envSource "github.com/adverax/core/sources/env"
+)
 
 type MyConfigAddress struct {
 	Host string `yaml:"host"`
@@ -23,13 +27,18 @@ func DefaultConfig() *MyConfig {
 }
 
 func Example() {
-	// This example demonstrates how to use YAML loader.
+	// This example demonstrates how to use Mixed loader.
 	//
 	// First, create loader:
-	loader, err := NewFileLoaderBuilder().
-		WithFile("config.global.yaml", false).
-		WithFile("config.local.yaml", false).
-		WithValidator(nil).
+	loader, err := yamlConfig.NewFileLoaderBuilder().
+		WithFile("config.global.json", false).
+		WithFile("config.local.json", false).
+		WithSource(
+			envSource.New(
+				envSource.NewPrefixGuard("MYAPP_"),
+				envSource.NewKeyPathAccumulator("_"),
+			),
+		).
 		Build()
 	if err != nil {
 		panic(err)
