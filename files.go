@@ -2,7 +2,7 @@ package configs
 
 import (
 	"fmt"
-	fileFetchers "github.com/adverax/core/fetchers/files"
+	fileFetchers "github.com/adverax/core/fetchers/bytes/files"
 )
 
 type SourceBuilder func(Fetcher) Source

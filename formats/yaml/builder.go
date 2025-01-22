@@ -2,7 +2,7 @@ package yamlConfig
 
 import (
 	"github.com/adverax/configs"
-	yamlSource "github.com/adverax/core/sources/yaml"
+	"github.com/adverax/core/fetchers/maps/yaml"
 )
 
 type Source struct {
@@ -13,7 +13,7 @@ func NewFileLoaderBuilder() *configs.FileLoaderBuilder {
 	return configs.NewFileLoaderBuilder().
 		WithSourceBuilder(
 			func(fetcher configs.Fetcher) configs.Source {
-				return yamlSource.New(fetcher)
+				return yamlFetcher.New(fetcher)
 			},
 		).
 		WithConverter(NewConverter())

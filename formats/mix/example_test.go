@@ -3,7 +3,7 @@ package mixedConfig
 import (
 	"fmt"
 	yamlConfig "github.com/adverax/configs/formats/yaml"
-	envSource "github.com/adverax/core/sources/env"
+	envFetcher "github.com/adverax/core/fetchers/maps/env"
 )
 
 type MyConfigAddress struct {
@@ -34,9 +34,9 @@ func Example() {
 		WithFile("config.global.json", false).
 		WithFile("config.local.json", false).
 		WithSource(
-			envSource.New(
-				envSource.NewPrefixGuard("MYAPP_"),
-				envSource.NewKeyPathAccumulator("_"),
+			envFetcher.New(
+				envFetcher.NewPrefixGuard("MYAPP_"),
+				envFetcher.NewKeyPathAccumulator("_"),
 			),
 		).
 		Build()

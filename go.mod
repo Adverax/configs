@@ -3,7 +3,7 @@ module github.com/adverax/configs
 go 1.21.6
 
 require (
-	github.com/adverax/core v1.0.3
+	github.com/adverax/core v1.0.5
 	github.com/go-playground/validator v9.31.0+incompatible
 	gopkg.in/yaml.v3 v3.0.1
 )
