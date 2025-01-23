@@ -6,7 +6,6 @@ It is a lightweight library for managing application configurations using YAML f
 - Supports JSON and YAML formats.
 - Supports loading from environment variables.
 - Merge multiple configuration sources.
-- Validate configurations with ease.
 - Support for nested and hierarchical configuration structures.
 
 ## Installation

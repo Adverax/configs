@@ -22,6 +22,11 @@ func (that *Builder) WithConverter(converter Converter) *Builder {
 	return that
 }
 
+func (that *Builder) WithDistinct(distinct bool) *Builder {
+	that.loader.distinct = distinct
+	return that
+}
+
 func (that *Builder) Build() (*Loader, error) {
 	if err := that.checkRequiredFields(); err != nil {
 		return nil, err

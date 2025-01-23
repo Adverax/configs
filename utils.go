@@ -1,6 +1,9 @@
 package configs
 
 import (
+	"crypto/md5"
+	"encoding/json"
+	"fmt"
 	"reflect"
 )
 
@@ -23,4 +26,13 @@ func override(a, b map[string]interface{}) {
 			a[k] = v
 		}
 	}
+}
+
+func hashOf(data map[string]interface{}) string {
+	bs, _ := json.MarshalIndent(data, "", "")
+	return digestOf(bs)
+}
+
+func digestOf(bs []byte) string {
+	return fmt.Sprintf("%x", md5.Sum(bs))
 }
