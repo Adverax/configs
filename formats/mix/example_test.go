@@ -3,7 +3,7 @@ package mixedConfig
 import (
 	"fmt"
 	yamlConfig "github.com/adverax/configs/formats/yaml"
-	envFetcher "github.com/adverax/core/fetchers/maps/env"
+	envFetcher "github.com/adverax/fetchers/maps/env"
 )
 
 type MyConfigAddress struct {

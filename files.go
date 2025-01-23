@@ -2,7 +2,7 @@ package configs
 
 import (
 	"fmt"
-	fileFetchers "github.com/adverax/core/fetchers/bytes/files"
+	fileFetchers "github.com/adverax/fetchers/bytes/files"
 )
 
 type SourceBuilder func(Fetcher) Source
@@ -10,7 +10,6 @@ type SourceBuilder func(Fetcher) Source
 type FileLoaderBuilder struct {
 	sources   []Source
 	builder   SourceBuilder
-	validator Validator
 	converter Converter
 	err       error
 }
@@ -48,11 +47,6 @@ func (that *FileLoaderBuilder) WithConverter(converter Converter) *FileLoaderBui
 	return that
 }
 
-func (that *FileLoaderBuilder) WithValidator(validator Validator) *FileLoaderBuilder {
-	that.validator = validator
-	return that
-}
-
 func (that *FileLoaderBuilder) Build() (*Loader, error) {
 	if err := that.checkRequiredFields(); err != nil {
 		return nil, err
@@ -61,7 +55,6 @@ func (that *FileLoaderBuilder) Build() (*Loader, error) {
 	return NewBuilder().
 		WithSource(that.sources...).
 		WithConverter(that.converter).
-		WithValidator(that.validator).
 		Build()
 }
 

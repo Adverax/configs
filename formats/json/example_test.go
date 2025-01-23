@@ -29,7 +29,6 @@ func Example() {
 	loader, err := NewFileLoaderBuilder().
 		WithFile("config.global.json", false).
 		WithFile("config.local.json", false).
-		WithValidator(nil).
 		Build()
 	if err != nil {
 		panic(err)

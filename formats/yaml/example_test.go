@@ -29,7 +29,6 @@ func Example() {
 	loader, err := NewFileLoaderBuilder().
 		WithFile("config.global.yaml", false).
 		WithFile("config.local.yaml", false).
-		WithValidator(nil).
 		Build()
 	if err != nil {
 		panic(err)

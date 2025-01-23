@@ -2,7 +2,7 @@ package yamlConfig
 
 import (
 	"github.com/adverax/configs"
-	"github.com/adverax/core/fetchers/maps/yaml"
+	"github.com/adverax/fetchers/maps/yaml"
 )
 
 type Source struct {

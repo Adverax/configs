@@ -22,11 +22,6 @@ func (that *Builder) WithConverter(converter Converter) *Builder {
 	return that
 }
 
-func (that *Builder) WithValidator(validator Validator) *Builder {
-	that.loader.validator = validator
-	return that
-}
-
 func (that *Builder) Build() (*Loader, error) {
 	if err := that.checkRequiredFields(); err != nil {
 		return nil, err

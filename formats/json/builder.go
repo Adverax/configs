@@ -2,7 +2,7 @@ package jsonConfig
 
 import (
 	"github.com/adverax/configs"
-	"github.com/adverax/core/fetchers/maps/json"
+	"github.com/adverax/fetchers/maps/json"
 )
 
 func NewFileLoaderBuilder() *configs.FileLoaderBuilder {
