@@ -14,7 +14,7 @@ type Source interface {
 }
 
 type Converter interface {
-	Convert(src, dst interface{}) error
+	Convert(src map[string]interface{}, dst interface{}) error
 }
 
 type Loader struct {
@@ -33,7 +33,7 @@ func (that *Loader) Load(config interface{}) error {
 	if that.distinct {
 		hash := that.hashOf(ds)
 		if hash == that.hash {
-			return ErrNotDistinct
+			return ErrDistinct
 		}
 	}
 
@@ -80,6 +80,17 @@ func (that *Loader) hashOf(data []map[string]interface{}) string {
 	return digestOf(bs)
 }
 
+type defaultConverter struct{}
+
+func (that *defaultConverter) Convert(src map[string]interface{}, dst interface{}) error {
+	Assign(src, dst)
+	return nil
+}
+
 var (
-	ErrNotDistinct = fmt.Errorf("config without changes")
+	DefaultConverter = &defaultConverter{}
+)
+
+var (
+	ErrDistinct = fmt.Errorf("config without changes")
 )

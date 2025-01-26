@@ -8,7 +8,9 @@ type Builder struct {
 
 func NewBuilder() *Builder {
 	return &Builder{
-		loader: &Loader{},
+		loader: &Loader{
+			converter: DefaultConverter,
+		},
 	}
 }
 

@@ -5,7 +5,37 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 )
+
+// Assign assigns values from src to dst.
+func Assign(src map[string]interface{}, dst interface{}) {
+	dstVal := reflect.ValueOf(dst).Elem()
+	dstType := dstVal.Type()
+
+	for i := 0; i < dstVal.NumField(); i++ {
+		field := dstVal.Field(i)
+		fieldType := dstType.Field(i)
+		tag := fieldType.Tag.Get("config")
+
+		if tag == "" {
+			tag = strings.ToLower(fieldType.Name)
+		}
+
+		if value, ok := src[tag]; ok {
+			if field.Kind() == reflect.Struct {
+				Assign(value.(map[string]interface{}), field.Addr().Interface())
+			} else {
+				val := reflect.ValueOf(value)
+				if val.Type().ConvertibleTo(field.Type()) {
+					field.Set(val.Convert(field.Type()))
+				} else {
+					field.Set(val)
+				}
+			}
+		}
+	}
+}
 
 func override(a, b map[string]interface{}) {
 	for k, v := range b {
