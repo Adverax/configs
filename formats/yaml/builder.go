@@ -15,6 +15,5 @@ func NewFileLoaderBuilder() *configs.FileLoaderBuilder {
 			func(fetcher configs.Fetcher) configs.Source {
 				return yamlFetcher.New(fetcher)
 			},
-		).
-		WithConverter(NewConverter())
+		)
 }

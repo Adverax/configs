@@ -3,13 +3,13 @@ package yamlConfig
 import "fmt"
 
 type MyConfigAddress struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host string `config:"host"`
+	Port int    `config:"port"`
 }
 
 type MyConfig struct {
-	Address MyConfigAddress `yaml:"address"`
-	Name    string          `yaml:"name"`
+	Address MyConfigAddress `config:"address"`
+	Name    string          `config:"name"`
 }
 
 func DefaultConfig() *MyConfig {
@@ -46,5 +46,5 @@ func Example() {
 	fmt.Println(*config)
 
 	// Output:
-	// {{google.com 90} My App}
+	// {{google.com 91} My App}
 }

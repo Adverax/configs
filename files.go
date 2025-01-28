@@ -15,7 +15,9 @@ type FileLoaderBuilder struct {
 }
 
 func NewFileLoaderBuilder() *FileLoaderBuilder {
-	return &FileLoaderBuilder{}
+	return &FileLoaderBuilder{
+		converter: DefaultConverter,
+	}
 }
 
 func (that *FileLoaderBuilder) WithSourceBuilder(builder SourceBuilder) *FileLoaderBuilder {

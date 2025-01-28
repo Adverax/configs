@@ -1,21 +1,10 @@
 package configs
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
-
-type Fetcher interface {
-	Fetch() ([]byte, error)
-}
-
-type Source interface {
-	Fetch() (map[string]interface{}, error)
-}
-
-type Converter interface {
-	Convert(src map[string]interface{}, dst interface{}) error
-}
 
 type Loader struct {
 	sources   []Source
@@ -39,7 +28,7 @@ func (that *Loader) Load(config interface{}) error {
 
 	data := that.merge(ds)
 
-	err = that.converter.Convert(data, config)
+	err = that.converter.Convert(config, data)
 	if err != nil {
 		return fmt.Errorf("error convert config: %w", err)
 	}
@@ -82,9 +71,8 @@ func (that *Loader) hashOf(data []map[string]interface{}) string {
 
 type defaultConverter struct{}
 
-func (that *defaultConverter) Convert(src map[string]interface{}, dst interface{}) error {
-	Assign(src, dst)
-	return nil
+func (that *defaultConverter) Convert(dst interface{}, src map[string]interface{}) error {
+	return Assign(context.Background(), dst, src)
 }
 
 var (

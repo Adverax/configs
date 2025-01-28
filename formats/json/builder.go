@@ -11,6 +11,5 @@ func NewFileLoaderBuilder() *configs.FileLoaderBuilder {
 			func(fetcher configs.Fetcher) configs.Source {
 				return jsonFetcher.New(fetcher)
 			},
-		).
-		WithConverter(NewConverter())
+		)
 }
