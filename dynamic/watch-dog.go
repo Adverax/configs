@@ -16,7 +16,7 @@ type Logger interface {
 	Error(msg string)
 }
 
-type Watcher struct {
+type WatchDog struct {
 	config    Config
 	newConfig func() Config
 	loader    Loader
@@ -26,15 +26,15 @@ type Watcher struct {
 	onUpdated func(bool)
 }
 
-func (that *Watcher) Start() {
+func (that *WatchDog) Start() {
 	go that.Serve()
 }
 
-func (that *Watcher) Close() {
+func (that *WatchDog) Close() {
 	close(that.done)
 }
 
-func (that *Watcher) Serve() {
+func (that *WatchDog) Serve() {
 	for {
 		select {
 		case <-that.done:
@@ -46,7 +46,7 @@ func (that *Watcher) Serve() {
 	}
 }
 
-func (that *Watcher) refresh(ctx context.Context) {
+func (that *WatchDog) refresh(ctx context.Context) {
 	config := Init(that.newConfig())
 	err := that.loader.Load(config)
 	if err != nil {

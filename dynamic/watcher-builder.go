@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-type WatcherBuilder struct {
-	watcher *Watcher
+type WatchDogBuilder struct {
+	watcher *WatchDog
 }
 
-func NewWatcherBuilder() *WatcherBuilder {
-	return &WatcherBuilder{
-		watcher: &Watcher{
+func NewWatchDogBuilder() *WatchDogBuilder {
+	return &WatchDogBuilder{
+		watcher: &WatchDog{
 			done:      make(chan struct{}),
 			interval:  time.Minute,
 			onUpdated: func(bool) {},
@@ -19,37 +19,37 @@ func NewWatcherBuilder() *WatcherBuilder {
 	}
 }
 
-func (that *WatcherBuilder) WithOnUpdated(onUpdated func(bool)) *WatcherBuilder {
+func (that *WatchDogBuilder) WithOnUpdated(onUpdated func(bool)) *WatchDogBuilder {
 	that.watcher.onUpdated = onUpdated
 	return that
 }
 
-func (that *WatcherBuilder) WithConfig(config Config) *WatcherBuilder {
+func (that *WatchDogBuilder) WithConfig(config Config) *WatchDogBuilder {
 	that.watcher.config = config
 	return that
 }
 
-func (that *WatcherBuilder) WithNewConfig(newConfig func() Config) *WatcherBuilder {
+func (that *WatchDogBuilder) WithNewConfig(newConfig func() Config) *WatchDogBuilder {
 	that.watcher.newConfig = newConfig
 	return that
 }
 
-func (that *WatcherBuilder) WithLoader(loader Loader) *WatcherBuilder {
+func (that *WatchDogBuilder) WithLoader(loader Loader) *WatchDogBuilder {
 	that.watcher.loader = loader
 	return that
 }
 
-func (that *WatcherBuilder) WithInterval(interval time.Duration) *WatcherBuilder {
+func (that *WatchDogBuilder) WithInterval(interval time.Duration) *WatchDogBuilder {
 	that.watcher.interval = interval
 	return that
 }
 
-func (that *WatcherBuilder) WithLogger(logger Logger) *WatcherBuilder {
+func (that *WatchDogBuilder) WithLogger(logger Logger) *WatchDogBuilder {
 	that.watcher.logger = logger
 	return that
 }
 
-func (that *WatcherBuilder) Build() (*Watcher, error) {
+func (that *WatchDogBuilder) Build() (*WatchDog, error) {
 	if err := that.checkRequiredFields(); err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (that *WatcherBuilder) Build() (*Watcher, error) {
 	return that.watcher, nil
 }
 
-func (that *WatcherBuilder) checkRequiredFields() error {
+func (that *WatchDogBuilder) checkRequiredFields() error {
 	if that.watcher.config == nil {
 		return ErrRequiredFieldConfig
 	}

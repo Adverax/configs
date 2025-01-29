@@ -49,7 +49,7 @@ func Example() {
 	}
 
 	// Then create watcher:
-	watcher, err := NewWatcherBuilder().
+	watcher, err := NewWatchDogBuilder().
 		WithConfig(config).
 		WithLoader(loader).
 		WithInterval(10 * time.Second).
