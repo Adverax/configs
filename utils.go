@@ -18,7 +18,8 @@ func Let(ctx context.Context, dst interface{}, src interface{}) error {
 	return handler.Let(ctx, dst, src)
 }
 
-func let[T any](ctx context.Context, dst interface{}, src interface{}) error {
+// LetTyped assigns values from src to dst.
+func LetTyped[T any](ctx context.Context, dst interface{}, src interface{}) error {
 	if g, ok := src.(Getter[T]); ok {
 		v, err := g.Get(ctx)
 		if err != nil {

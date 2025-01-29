@@ -14,49 +14,49 @@ type BooleanTypeHandler struct {
 }
 
 func (that *BooleanTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[bool](ctx, dst, src)
+	return LetTyped[bool](ctx, dst, src)
 }
 
 type IntegerTypeHandler struct {
 }
 
 func (that *IntegerTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[int64](ctx, dst, src)
+	return LetTyped[int64](ctx, dst, src)
 }
 
 type FloatTypeHandler struct {
 }
 
 func (that *FloatTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[float64](ctx, dst, src)
+	return LetTyped[float64](ctx, dst, src)
 }
 
 type StringTypeHandler struct {
 }
 
 func (that *StringTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[string](ctx, dst, src)
+	return LetTyped[string](ctx, dst, src)
 }
 
 type DurationTypeHandler struct {
 }
 
 func (that *DurationTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[time.Duration](ctx, dst, src)
+	return LetTyped[time.Duration](ctx, dst, src)
 }
 
 type StringsTypeHandler struct {
 }
 
 func (that *StringsTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[[]string](ctx, dst, src)
+	return LetTyped[[]string](ctx, dst, src)
 }
 
 type TimeTypeHandler struct {
 }
 
 func (that *TimeTypeHandler) Let(ctx context.Context, dst interface{}, src interface{}) error {
-	return let[time.Time](ctx, dst, src)
+	return LetTyped[time.Time](ctx, dst, src)
 }
 
 type Registry struct {
