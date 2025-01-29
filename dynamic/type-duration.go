@@ -3,17 +3,14 @@ package dynConfigs
 import (
 	"context"
 	"fmt"
+	"github.com/adverax/configs"
+	"reflect"
 	"sync"
 	"time"
 )
 
 type Duration interface {
 	Get(ctx context.Context) (time.Duration, error)
-}
-
-type DurationEx interface {
-	Duration
-	Init(c Config)
 }
 
 type DurationField struct {
@@ -64,4 +61,18 @@ func (that *DurationField) String() string {
 
 func NewDuration(value time.Duration) *DurationField {
 	return &DurationField{value: value}
+}
+
+type DurationTypeHandler struct {
+	configs.DurationTypeHandler
+}
+
+func (that *DurationTypeHandler) New(conf Config) interface{} {
+	field := NewDuration(0)
+	field.Init(conf)
+	return field
+}
+
+func init() {
+	configs.RegisterHandler(reflect.TypeOf((*configs.Duration)(nil)).Elem(), &DurationTypeHandler{})
 }

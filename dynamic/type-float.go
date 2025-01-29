@@ -3,16 +3,13 @@ package dynConfigs
 import (
 	"context"
 	"fmt"
+	"github.com/adverax/configs"
+	"reflect"
 	"sync"
 )
 
 type Float interface {
 	Get(ctx context.Context) (float64, error)
-}
-
-type FloatEx interface {
-	Float
-	Init(c Config)
 }
 
 type FloatField struct {
@@ -63,4 +60,18 @@ func (that *FloatField) String() string {
 
 func NewFloat(value float64) *FloatField {
 	return &FloatField{value: value}
+}
+
+type FloatTypeHandler struct {
+	configs.FloatTypeHandler
+}
+
+func (that *FloatTypeHandler) New(conf Config) interface{} {
+	field := NewFloat(0)
+	field.Init(conf)
+	return field
+}
+
+func init() {
+	configs.RegisterHandler(reflect.TypeOf((*configs.Float)(nil)).Elem(), &FloatTypeHandler{})
 }

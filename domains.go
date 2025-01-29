@@ -2,8 +2,20 @@ package configs
 
 import (
 	"context"
+	"sync"
 	"time"
 )
+
+type Config interface {
+	Lock()
+	Unlock()
+	RLock()
+	RUnlock()
+}
+
+type BaseConfig struct {
+	sync.RWMutex
+}
 
 type Fetcher interface {
 	Fetch() ([]byte, error)

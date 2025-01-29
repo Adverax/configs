@@ -20,7 +20,6 @@ type Watcher struct {
 	newConfig func() Config
 	loader    Loader
 	interval  time.Duration
-	composer  *Composer
 	logger    Logger
 	done      chan struct{}
 }
@@ -46,8 +45,7 @@ func (that *Watcher) Serve() {
 }
 
 func (that *Watcher) refresh() {
-	config := that.newConfig()
-	that.composer.Init(config)
+	config := Init(that.newConfig())
 	err := that.loader.Load(config)
 	if err != nil {
 		if !errors.Is(err, configs.ErrDistinct) {
@@ -58,5 +56,5 @@ func (that *Watcher) refresh() {
 		return
 	}
 
-	that.composer.Assign(that.config, config)
+	Assign(that.config, config)
 }

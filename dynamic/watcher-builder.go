@@ -14,7 +14,6 @@ func NewWatcherBuilder() *WatcherBuilder {
 		watcher: &Watcher{
 			done:     make(chan struct{}),
 			interval: time.Minute,
-			composer: NewComposer(NewFieldFactory()),
 		},
 	}
 }
@@ -36,11 +35,6 @@ func (that *WatcherBuilder) WithLoader(loader Loader) *WatcherBuilder {
 
 func (that *WatcherBuilder) WithInterval(interval time.Duration) *WatcherBuilder {
 	that.watcher.interval = interval
-	return that
-}
-
-func (that *WatcherBuilder) WithFieldFactory(factory FieldFactory) *WatcherBuilder {
-	that.watcher.composer = NewComposer(factory)
 	return that
 }
 
@@ -70,16 +64,11 @@ func (that *WatcherBuilder) checkRequiredFields() error {
 		return ErrRequiredFieldLoader
 	}
 
-	if that.watcher.composer == nil {
-		return ErrRequiredFieldComposer
-	}
-
 	return nil
 }
 
 var (
 	ErrRequiredFieldNewConfig = errors.New("newConfig is required")
 	ErrRequiredFieldLoader    = errors.New("loader is required")
-	ErrRequiredFieldComposer  = errors.New("composer is required")
 	ErrRequiredFieldConfig    = errors.New("config is required")
 )

@@ -1,6 +1,9 @@
 package dynConfigs
 
-import "sync"
+import (
+	"github.com/adverax/configs"
+	"sync"
+)
 
 type Config interface {
 	Lock()
@@ -15,4 +18,9 @@ type BaseConfig struct {
 
 type Clonable interface {
 	Clone() interface{}
+}
+
+type TypeHandler interface {
+	configs.TypeHandler
+	New(conf Config) interface{}
 }

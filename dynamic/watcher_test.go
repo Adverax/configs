@@ -42,8 +42,7 @@ func Example() {
 
 	// Then load initial configuration:
 	config := DefaultConfig()
-	composer := NewComposer(NewFieldFactory())
-	composer.Init(config)
+	Init(config)
 	err = loader.Load(config)
 	if err != nil {
 		panic(err)

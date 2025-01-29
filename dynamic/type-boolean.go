@@ -3,16 +3,13 @@ package dynConfigs
 import (
 	"context"
 	"fmt"
+	"github.com/adverax/configs"
+	"reflect"
 	"sync"
 )
 
 type Boolean interface {
 	Get(ctx context.Context) (bool, error)
-}
-
-type BooleanEx interface {
-	Boolean
-	Init(c Config)
 }
 
 type BooleanField struct {
@@ -39,14 +36,14 @@ func (that *BooleanField) Set(ctx context.Context, value bool) error {
 	return that.Let(ctx, value)
 }
 
-func (that *BooleanField) Fetch(ctx context.Context) (bool, error) {
+func (that *BooleanField) Fetch(_ context.Context) (bool, error) {
 	that.RLock()
 	defer that.RUnlock()
 
 	return that.value, nil
 }
 
-func (that *BooleanField) Let(ctx context.Context, value bool) error {
+func (that *BooleanField) Let(_ context.Context, value bool) error {
 	that.Lock()
 	defer that.Unlock()
 
@@ -63,4 +60,18 @@ func (that *BooleanField) String() string {
 
 func NewBoolean(value bool) *BooleanField {
 	return &BooleanField{value: value}
+}
+
+type BooleanTypeHandler struct {
+	configs.BooleanTypeHandler
+}
+
+func (that *BooleanTypeHandler) New(conf Config) interface{} {
+	field := NewBoolean(false)
+	field.Init(conf)
+	return field
+}
+
+func init() {
+	configs.RegisterHandler(reflect.TypeOf((*configs.Boolean)(nil)).Elem(), &BooleanTypeHandler{})
 }

@@ -19,10 +19,7 @@ func TestInit(t *testing.T) {
 	}
 
 	obj := &TestStruct{}
-	factory := NewFieldFactory()
-	composer := NewComposer(factory)
-
-	composer.Init(obj)
+	Init(obj)
 
 	if obj.BoolField == nil {
 		t.Error("BoolField not initialized")
@@ -71,11 +68,9 @@ func TestAssign(t *testing.T) {
 	}
 
 	dst := &TestStruct{}
-	factory := NewFieldFactory()
-	composer := NewComposer(factory)
-	composer.Init(src)
-	composer.Init(dst)
-	composer.Assign(dst, src)
+	Init(src)
+	Init(dst)
+	Assign(dst, src)
 
 	if v, _ := dst.BoolField.Get(context.Background()); v != true {
 		t.Error("BoolField not assigned correctly")

@@ -7,33 +7,28 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 )
 
 func Let(ctx context.Context, dst interface{}, src interface{}) error {
-	switch dst.(type) {
-	case Boolean:
-		return let[bool](ctx, dst, src)
-	case Integer:
-		return let[int64](ctx, dst, src)
-	case Float:
-		return let[float64](ctx, dst, src)
-	case String:
-		return let[string](ctx, dst, src)
-	case Duration:
-		return let[time.Duration](ctx, dst, src)
-	case Strings:
-		return let[[]string](ctx, dst, src)
-	case Time:
-		return let[time.Time](ctx, dst, src)
-	default:
+	handler := registry.Get(reflect.TypeOf(dst))
+	if handler == nil {
 		return nil
 	}
+
+	return handler.Let(ctx, dst, src)
 }
 
 func let[T any](ctx context.Context, dst interface{}, src interface{}) error {
-	if d, ok := dst.(Importer); ok {
-		return d.Import(ctx, src)
+	if g, ok := src.(Getter[T]); ok {
+		v, err := g.Get(ctx)
+		if err != nil {
+			return err
+		}
+		src = v
+	} else {
+		if d, ok := dst.(Importer); ok {
+			return d.Import(ctx, src)
+		}
 	}
 
 	if d, ok := dst.(Letter[T]); ok {

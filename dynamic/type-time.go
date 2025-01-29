@@ -2,6 +2,8 @@ package dynConfigs
 
 import (
 	"context"
+	"github.com/adverax/configs"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -10,11 +12,6 @@ var TimeFormat = time.RFC3339
 
 type Time interface {
 	Get(ctx context.Context) (time.Time, error)
-}
-
-type TimeEx interface {
-	Time
-	Init(c Config)
 }
 
 type TimeField struct {
@@ -77,4 +74,18 @@ func (that *TimeField) String() string {
 
 func NewTime(value time.Time) *TimeField {
 	return &TimeField{value: value}
+}
+
+type TimeTypeHandler struct {
+	configs.TimeTypeHandler
+}
+
+func (that *TimeTypeHandler) New(conf Config) interface{} {
+	field := NewTime(time.Time{})
+	field.Init(conf)
+	return field
+}
+
+func init() {
+	configs.RegisterHandler(reflect.TypeOf((*configs.Time)(nil)).Elem(), &TimeTypeHandler{})
 }

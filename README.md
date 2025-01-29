@@ -10,6 +10,8 @@ It is a lightweight library for managing application configurations using YAML f
 - Supports migrations from one version to another.
 - Merge multiple configuration sources.
 - Support for nested and hierarchical configuration structures.
+- Support dynamic reloading of sources.
+- Extensible and customizable.
 
 ## Installation
 
@@ -24,6 +26,7 @@ go get github.com/adverax/configs
 - see adverax/configs/formats/json/example_test.go for more information.
 - see adverax/configs/formats/mix/example_test.go for more information.
 - see migrations_test.go for more information.
+- see adverax/configs/dynamic/example_test.go for more information.
 
 ```go
 

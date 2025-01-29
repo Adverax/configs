@@ -3,16 +3,13 @@ package dynConfigs
 import (
 	"context"
 	"fmt"
+	"github.com/adverax/configs"
+	"reflect"
 	"sync"
 )
 
 type Strings interface {
 	Get(ctx context.Context) ([]string, error)
-}
-
-type StringsEx interface {
-	Strings
-	Init(c Config)
 }
 
 type StringsField struct {
@@ -65,4 +62,18 @@ func (that *StringsField) String() string {
 
 func NewStrings(value []string) *StringsField {
 	return &StringsField{value: value}
+}
+
+type StringsTypeHandler struct {
+	configs.StringsTypeHandler
+}
+
+func (that *StringsTypeHandler) New(conf Config) interface{} {
+	field := NewStrings(nil)
+	field.Init(conf)
+	return field
+}
+
+func init() {
+	configs.RegisterHandler(reflect.TypeOf((*configs.Strings)(nil)).Elem(), &StringsTypeHandler{})
 }
