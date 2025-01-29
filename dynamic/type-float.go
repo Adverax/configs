@@ -66,6 +66,14 @@ type FloatTypeHandler struct {
 	configs.FloatTypeHandler
 }
 
+func (that *FloatTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Float); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *FloatTypeHandler) New(conf Config) interface{} {
 	field := NewFloat(0)
 	field.Init(conf)

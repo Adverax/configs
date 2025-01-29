@@ -1,6 +1,7 @@
 package dynConfigs
 
 import (
+	"context"
 	"github.com/adverax/configs"
 	"sync"
 )
@@ -22,5 +23,6 @@ type Clonable interface {
 
 type TypeHandler interface {
 	configs.TypeHandler
+	Get(ctx context.Context, field interface{}) (interface{}, error)
 	New(conf Config) interface{}
 }

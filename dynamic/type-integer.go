@@ -66,6 +66,14 @@ type IntegerTypeHandler struct {
 	configs.IntegerTypeHandler
 }
 
+func (that *IntegerTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Integer); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *IntegerTypeHandler) New(conf Config) interface{} {
 	field := NewInteger(0)
 	field.Init(conf)

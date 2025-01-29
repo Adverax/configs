@@ -94,3 +94,112 @@ func TestAssign(t *testing.T) {
 		t.Error("Nested.IntField not assigned correctly")
 	}
 }
+
+func TestIsStaticUpdated0(t *testing.T) {
+	type TestStruct struct {
+		BaseConfig
+		StringField String `config:"string_field,static"`
+		IntField    Integer
+	}
+
+	a := &TestStruct{
+		StringField: NewString("test"),
+		IntField:    NewInteger(42),
+	}
+	Init(a)
+
+	b := &TestStruct{
+		StringField: NewString("test2"),
+		IntField:    NewInteger(45),
+	}
+	Init(b)
+
+	isStatic, err := isStaticUpdated(context.Background(), a, b)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !isStatic {
+		t.Error("Static fields should be updated")
+	}
+}
+
+func TestIsStaticUpdated(t *testing.T) {
+	type NestedStruct struct {
+		IntField Integer `config:"int_field,static"`
+	}
+
+	type TestStruct struct {
+		BaseConfig
+		StringField String `config:"string_field,static"`
+		IntField    Integer
+		Nested      NestedStruct
+	}
+
+	tests := []struct {
+		name     string
+		a, b     *TestStruct
+		expected bool
+	}{
+		{
+			name: "Static field updated",
+			a: &TestStruct{
+				StringField: NewString("test"),
+				IntField:    NewInteger(42),
+			},
+			b: &TestStruct{
+				StringField: NewString("test2"),
+				IntField:    NewInteger(42),
+			},
+			expected: true,
+		},
+		{
+			name: "Static nested field updated",
+			a: &TestStruct{
+				Nested: NestedStruct{IntField: NewInteger(55)},
+			},
+			b: &TestStruct{
+				Nested: NestedStruct{IntField: NewInteger(56)},
+			},
+			expected: true,
+		},
+		{
+			name: "No static field updated",
+			a: &TestStruct{
+				StringField: NewString("test"),
+				IntField:    NewInteger(42),
+			},
+			b: &TestStruct{
+				StringField: NewString("test"),
+				IntField:    NewInteger(45),
+			},
+			expected: false,
+		},
+		{
+			name: "No static nested field updated",
+			a: &TestStruct{
+				Nested: NestedStruct{IntField: NewInteger(55)},
+			},
+			b: &TestStruct{
+				Nested: NestedStruct{IntField: NewInteger(55)},
+			},
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Init(tt.a)
+			Init(tt.b)
+
+			isStatic, err := isStaticUpdated(context.Background(), tt.a, tt.b)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if isStatic != tt.expected {
+				t.Errorf("expected %v, got %v", tt.expected, isStatic)
+			}
+		})
+	}
+}

@@ -1,6 +1,7 @@
 package dynConfigs
 
 import (
+	"context"
 	"errors"
 	"github.com/adverax/configs"
 	"time"
@@ -22,6 +23,7 @@ type Watcher struct {
 	interval  time.Duration
 	logger    Logger
 	done      chan struct{}
+	onUpdated func(bool)
 }
 
 func (that *Watcher) Start() {
@@ -40,11 +42,11 @@ func (that *Watcher) Serve() {
 		case <-time.After(that.interval):
 		}
 
-		that.refresh()
+		that.refresh(context.Background())
 	}
 }
 
-func (that *Watcher) refresh() {
+func (that *Watcher) refresh(ctx context.Context) {
 	config := Init(that.newConfig())
 	err := that.loader.Load(config)
 	if err != nil {
@@ -56,5 +58,14 @@ func (that *Watcher) refresh() {
 		return
 	}
 
+	isStatic, err := isStaticUpdated(ctx, that.config, config)
+	if err != nil {
+		if that.logger != nil {
+			that.logger.WithError(err).Error("error update config")
+		}
+		return
+	}
+
 	Assign(that.config, config)
+	that.onUpdated(isStatic)
 }

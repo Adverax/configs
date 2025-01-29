@@ -68,6 +68,14 @@ type StringsTypeHandler struct {
 	configs.StringsTypeHandler
 }
 
+func (that *StringsTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Strings); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *StringsTypeHandler) New(conf Config) interface{} {
 	field := NewStrings(nil)
 	field.Init(conf)

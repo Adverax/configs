@@ -47,19 +47,33 @@ func let[T any](ctx context.Context, dst interface{}, src interface{}) error {
 
 // Assign assigns values from src to dst.
 func Assign(ctx context.Context, dst interface{}, src map[string]interface{}) error {
-	dstVal := reflect.ValueOf(dst).Elem()
-	dstType := dstVal.Type()
+	dstValue := reflect.ValueOf(dst).Elem()
+	dstType := dstValue.Type()
 
-	for i := 0; i < dstVal.NumField(); i++ {
-		field := dstVal.Field(i)
+	for i := 0; i < dstValue.NumField(); i++ {
+		field := dstValue.Field(i)
 		fieldType := dstType.Field(i)
-		tag := fieldType.Tag.Get("config")
 
-		if tag == "" {
-			tag = strings.ToLower(fieldType.Name)
+		if !fieldType.IsExported() {
+			continue
+		}
+		if !field.CanSet() {
+			continue
 		}
 
-		if value, ok := src[tag]; ok {
+		raw := fieldType.Tag.Get("config")
+		if raw == "-" {
+			continue
+		}
+
+		tags := ParseTags(raw)
+
+		name := strings.ToLower(fieldType.Name)
+		if tag, ok := tags["name"]; ok {
+			name = tag
+		}
+
+		if value, ok := src[name]; ok {
 			kind := field.Kind()
 			switch kind {
 			case reflect.Interface:
@@ -113,4 +127,31 @@ func hashOf(data map[string]interface{}) string {
 
 func digestOf(bs []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(bs))
+}
+
+func ParseTags(tags string) map[string]string {
+	list := strings.Split(tags, ",")
+	res := make(map[string]string)
+	for i, tag := range list {
+		if tag == "" {
+			continue
+		}
+
+		var frames []string
+		frames = strings.Split(tag, "=")
+		if i == 0 {
+			if len(frames) == 1 {
+				res["name"] = frames[0]
+				continue
+			}
+		}
+
+		if len(frames) == 1 {
+			res[tag] = ""
+		} else {
+			res[frames[0]] = frames[1]
+		}
+	}
+
+	return res
 }

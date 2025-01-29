@@ -12,10 +12,16 @@ type WatcherBuilder struct {
 func NewWatcherBuilder() *WatcherBuilder {
 	return &WatcherBuilder{
 		watcher: &Watcher{
-			done:     make(chan struct{}),
-			interval: time.Minute,
+			done:      make(chan struct{}),
+			interval:  time.Minute,
+			onUpdated: func(bool) {},
 		},
 	}
+}
+
+func (that *WatcherBuilder) WithOnUpdated(onUpdated func(bool)) *WatcherBuilder {
+	that.watcher.onUpdated = onUpdated
+	return that
 }
 
 func (that *WatcherBuilder) WithConfig(config Config) *WatcherBuilder {

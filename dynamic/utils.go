@@ -60,11 +60,24 @@ func Assign(dst, src Config) {
 func assign(dst, src interface{}, conf Config) {
 	dstValue := reflect.ValueOf(dst).Elem()
 	srcValue := reflect.ValueOf(src).Elem()
+	dstType := dstValue.Type()
+	srcType := srcValue.Type()
+	if srcType != dstType {
+		return
+	}
 
 	for i := 0; i < srcValue.NumField(); i++ {
 		srcField := srcValue.Field(i)
 		dstField := dstValue.Field(i)
+		dstFieldType := dstType.Field(i)
+		srcFieldType := srcType.Field(i)
 
+		if dstFieldType.Type != srcFieldType.Type {
+			continue
+		}
+		if !dstFieldType.IsExported() || !srcFieldType.IsExported() {
+			continue
+		}
 		if !srcField.CanInterface() || !dstField.CanSet() {
 			continue
 		}
@@ -127,4 +140,78 @@ func letInterface(dst, src reflect.Value, conf Config) error {
 	}
 
 	return configs.Let(context.Background(), dst.Interface(), src.Interface())
+}
+
+// isStaticUpdated checks if the static fields of dst structure has been updated.
+func isStaticUpdated(ctx context.Context, dst interface{}, src interface{}) (bool, error) {
+	srcValue := reflect.ValueOf(src).Elem()
+	dstValue := reflect.ValueOf(dst).Elem()
+	srcType := srcValue.Type()
+	dstType := dstValue.Type()
+	if srcType != dstType {
+		return false, nil
+	}
+
+	for i := 0; i < dstValue.NumField(); i++ {
+		srcField := srcValue.Field(i)
+		dstField := dstValue.Field(i)
+		srcFieldType := srcType.Field(i)
+		dstFieldType := dstType.Field(i)
+
+		if srcFieldType.Type != dstFieldType.Type {
+			continue
+		}
+		if !dstFieldType.IsExported() || !srcFieldType.IsExported() {
+			continue
+		}
+		if !srcField.CanInterface() || !dstField.CanInterface() {
+			continue
+		}
+
+		raw := dstFieldType.Tag.Get("config")
+		if raw == "-" {
+			continue
+		}
+
+		tags := configs.ParseTags(raw)
+
+		kind := dstField.Kind()
+		switch kind {
+		case reflect.Struct:
+			isStatic, err := isStaticUpdated(ctx, dstField.Addr().Interface(), srcField.Addr().Interface())
+			if err != nil {
+				return false, err
+			}
+			if isStatic {
+				return true, nil
+			}
+		case reflect.Interface:
+			if _, ok := tags["static"]; !ok {
+				continue
+			}
+			handler := configs.HandlerOf(dstField.Type())
+			if h, ok := handler.(TypeHandler); ok {
+				a, err := h.Get(ctx, dstField.Interface())
+				if err != nil {
+					return false, err
+				}
+				b, err := h.Get(ctx, srcField.Interface())
+				if err != nil {
+					return false, err
+				}
+				if !reflect.DeepEqual(a, b) {
+					return true, nil
+				}
+			}
+		default:
+			if _, ok := tags["static"]; !ok {
+				continue
+			}
+			if !reflect.DeepEqual(srcField.Interface(), dstField.Interface()) {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }

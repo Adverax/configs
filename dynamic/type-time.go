@@ -80,6 +80,14 @@ type TimeTypeHandler struct {
 	configs.TimeTypeHandler
 }
 
+func (that *TimeTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Time); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *TimeTypeHandler) New(conf Config) interface{} {
 	field := NewTime(time.Time{})
 	field.Init(conf)

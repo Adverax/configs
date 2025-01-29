@@ -67,6 +67,14 @@ type DurationTypeHandler struct {
 	configs.DurationTypeHandler
 }
 
+func (that *DurationTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Duration); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *DurationTypeHandler) New(conf Config) interface{} {
 	field := NewDuration(0)
 	field.Init(conf)

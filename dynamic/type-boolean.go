@@ -66,6 +66,14 @@ type BooleanTypeHandler struct {
 	configs.BooleanTypeHandler
 }
 
+func (that *BooleanTypeHandler) Get(ctx context.Context, field interface{}) (interface{}, error) {
+	if f, ok := field.(Boolean); ok {
+		return f.Get(ctx)
+	}
+
+	return nil, nil
+}
+
 func (that *BooleanTypeHandler) New(conf Config) interface{} {
 	field := NewBoolean(false)
 	field.Init(conf)
