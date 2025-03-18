@@ -9,19 +9,21 @@ import (
 	"sync"
 )
 
+type FileStringValue string
+
 type FileString interface {
-	Get(ctx context.Context) (string, error)
+	Get(ctx context.Context) (FileStringValue, error)
 }
 
 type FileStringField struct {
 	config Config
 	sync.RWMutex
-	defValue string
-	value    string
+	defValue FileStringValue
+	value    FileStringValue
 	filename string
 }
 
-func NewFileString(filename string, defValue string) *FileStringField {
+func NewFileString(filename string, defValue FileStringValue) *FileStringField {
 	return &FileStringField{
 		filename: filename,
 		value:    defValue,
@@ -33,21 +35,21 @@ func (that *FileStringField) Init(c Config) {
 	that.config = c
 }
 
-func (that *FileStringField) Set(ctx context.Context, value string) error {
+func (that *FileStringField) Set(ctx context.Context, value FileStringValue) error {
 	that.config.Lock()
 	defer that.config.Unlock()
 
 	return that.Let(ctx, value)
 }
 
-func (that *FileStringField) Get(ctx context.Context) (string, error) {
+func (that *FileStringField) Get(ctx context.Context) (FileStringValue, error) {
 	that.config.RLock()
 	defer that.config.RUnlock()
 
 	return that.Fetch(ctx)
 }
 
-func (that *FileStringField) Let(ctx context.Context, value string) error {
+func (that *FileStringField) Let(ctx context.Context, value FileStringValue) error {
 	that.Lock()
 	defer that.Unlock()
 
@@ -60,7 +62,7 @@ func (that *FileStringField) Let(ctx context.Context, value string) error {
 	return nil
 }
 
-func (that *FileStringField) Fetch(ctx context.Context) (string, error) {
+func (that *FileStringField) Fetch(ctx context.Context) (FileStringValue, error) {
 	that.RLock()
 	defer that.RUnlock()
 
@@ -81,13 +83,13 @@ func (that *FileStringField) Fetch(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	that.value = strings.TrimSpace(string(data))
+	that.value = FileStringValue(strings.TrimSpace(string(data)))
 	return that.value, nil
 }
 
 func (that *FileStringField) String() string {
 	val, _ := that.Fetch(context.Background())
-	return val
+	return string(val)
 }
 
 type FileStringTypeHandler struct {
